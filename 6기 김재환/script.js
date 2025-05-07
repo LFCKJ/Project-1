@@ -15,19 +15,54 @@ class Calculator{
     }
     onPressOperation(operation){
         this.$PreviousPreviewPrompt.textContent = 
-        this.$CurrentpreviewPrompt.textContent; + " " + operation;
+        this.$CurrentpreviewPrompt.textContent + " " + operation;
         this.$CurrentpreviewPrompt.textContent = "";
+
+        this.PreviousOperation = operation;
     }
 
-    onEqual(){}
+    
+    handlePlus(){
+      return (+this.$PreviousPreviewPrompt.textContent.split(" ")[0] +
+          +this.$CurrentpreviewPrompt.textContent); 
+
+    }
+    handleMinus(){
+        return (+this.$PreviousPreviewPrompt.textContent.split(" ")[0] -
+        +this.$CurrentpreviewPrompt.textContent); 
+    }
+    handleMultiply(){
+        return (+this.$PreviousPreviewPrompt.textContent.split(" ")[0] *
+        +this.$CurrentpreviewPrompt.textContent); 
+    }
+    handleDivide(){
+        return (+this.$PreviousPreviewPrompt.textContent.split(" ")[0] /
+        +this.$CurrentpreviewPrompt.textContent); 
+    }
+
     onReset(){}
     onDelete(){}
 
-    handlePlus(){}
-    handleminus(){}
-    handlemultiply(){}
-    handledivide(){}
+    onEqaul(){
+        let result = 0;
+        if(this.PreviousOperation == "+"){
+            result = this.handlePlus();
+        }else if(this.PreviousOperation == "-"){
+            result = this.handleMinus();
+        }else if(this.PreviousOperation == "*"){
+            result = this.handleMultiply();
+        }else if(this.PreviousOperation == "÷"){
+            result = this.handleDivide();
+        }
+        this.$PreviousPreviewPrompt.textContent = "";
+        this.$CurrentpreviewPrompt.textContent = result.toString();
+        this.CurrentOperation ="";
+    }
+
+
 }
+   
+   
 
 
 // 연산자
@@ -59,7 +94,12 @@ $numbers.forEach(($number)=>{
 //연산자선택
 $operations.forEach(($operation)=>{
     $operation.addEventListener("click",(e)=>{
-       calc.onPressOperation($operation.textContent);
+        if(e.target.textContent.trim() === "="){
+            calc.onEqaul();
+        }else{
+            calc.onPressOperation($operation.textContent.trim());
+        }
+       //.trim() 공백제거
     });
 });
 
