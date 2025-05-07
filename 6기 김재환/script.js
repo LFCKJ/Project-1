@@ -40,9 +40,7 @@ class Calculator{
         +this.$CurrentpreviewPrompt.textContent); 
     }
 
-    onReset(){}
-    onDelete(){}
-
+    
     onEqaul(){
         let result = 0;
         if(this.PreviousOperation == "+"){
@@ -58,6 +56,16 @@ class Calculator{
         this.$CurrentpreviewPrompt.textContent = result.toString();
         this.CurrentOperation ="";
     }
+    onReset(){
+        this.$PreviousPreviewPrompt.textContent = "";
+        this.$CurrentpreviewPrompt.textContent = "";
+        this.PreviousOperation = "";
+        this.CurrentOperation = "";
+    }
+    onDelete(){
+        this.$CurrentpreviewPrompt.textContent = this.$CurrentpreviewPrompt.textContent.slice(0,-1);
+    }
+
 
 
 }
@@ -102,6 +110,15 @@ $operations.forEach(($operation)=>{
        //.trim() 공백제거
     });
 });
+
+$reset.addEventListener("click",(e)=>{
+    calc.onReset();
+}
+);
+$delete.addEventListener("click",(e)=>{
+    calc.onDelete();
+}
+);
 
 // 객체 생성
 const calc = new Calculator($PreviousPreview, $Currentpreview);
