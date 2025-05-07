@@ -14,7 +14,9 @@ class Calculator{
         
     }
     onPressOperation(operation){
-        console.log(operation);
+        this.$PreviousPreviewPrompt.textContent = 
+        this.$CurrentpreviewPrompt.textContent; + " " + operation;
+        this.$CurrentpreviewPrompt.textContent = "";
     }
 
     onEqual(){}
@@ -57,7 +59,7 @@ $numbers.forEach(($number)=>{
 //연산자선택
 $operations.forEach(($operation)=>{
     $operation.addEventListener("click",(e)=>{
-       calc.onPressOperation($operation);
+       calc.onPressOperation($operation.textContent);
     });
 });
 
