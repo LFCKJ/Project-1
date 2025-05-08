@@ -9,16 +9,38 @@ class Calculator{
         
     }
 
-    onPressNumber(number){
-        this.$CurrentpreviewPrompt.textContent += number;
-        
-    }
-    onPressOperation(operation){
-        this.$PreviousPreviewPrompt.textContent = 
-        this.$CurrentpreviewPrompt.textContent + " " + operation;
-        this.$CurrentpreviewPrompt.textContent = "";
+    onPressNumber(number) {
+        // 소수점 입력 처리
+        if (number === ".") {
+            if (this.$CurrentpreviewPrompt.textContent === "") {
+                // 처음 입력이 "."인 경우 "0."으로 시작
+                this.$CurrentpreviewPrompt.textContent = "0.";
+            } else if (!this.$CurrentpreviewPrompt.textContent.includes(".")) {
+                // 현재 입력에 소수점이 없으면 추가
+                this.$CurrentpreviewPrompt.textContent += number;
+            }
+            // 이미 소수점이 있으면 아무 작업도 하지 않음
+            return;
+        }
 
-        this.PreviousOperation = operation;
+        // 숫자 입력
+        this.$CurrentpreviewPrompt.textContent += number;
+    }
+
+    onPressOperation(operation) {
+        // 현재 입력값이 비어 있지 않을 때만 이전 프롬프트에 저장
+        if (this.$CurrentpreviewPrompt.textContent !== "") {
+            this.$PreviousPreviewPrompt.textContent = 
+                this.$CurrentpreviewPrompt.textContent + " " + operation;
+            this.PreviousOperation = operation;
+            this.$CurrentpreviewPrompt.textContent = ""; // 현재 입력값 초기화
+        } else if (this.$PreviousPreviewPrompt.textContent !== "") {
+            // 연산자를 연속으로 누를 경우, 마지막 연산자를 업데이트
+            const parts = this.$PreviousPreviewPrompt.textContent.split(" ");
+            parts[1] = operation; // 연산자만 변경
+            this.$PreviousPreviewPrompt.textContent = parts.join(" ");
+            this.PreviousOperation = operation;
+        }
     }
 
     
@@ -122,3 +144,5 @@ $delete.addEventListener("click",(e)=>{
 
 // 객체 생성
 const calc = new Calculator($PreviousPreview, $Currentpreview);
+
+//....키 처음에 사용 못하게 하기 결과값 del키 사용 금지
