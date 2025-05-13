@@ -30,8 +30,16 @@ class Calculator{
     onPressOperation(operation) {
         // 현재 입력값이 비어 있지 않을 때만 이전 프롬프트에 저장
         if (this.$CurrentpreviewPrompt.textContent !== "") {
-            this.$PreviousPreviewPrompt.textContent = 
-                this.$CurrentpreviewPrompt.textContent + " " + operation;
+            if (this.$PreviousPreviewPrompt.textContent !== "") {
+                // 이전 값과 현재 값을 계산 후 이어받기
+                const result = this.evaluateExpression(
+                    this.$PreviousPreviewPrompt.textContent + this.$CurrentpreviewPrompt.textContent
+                );
+                this.$PreviousPreviewPrompt.textContent = result + " " + operation;
+            } else {
+                this.$PreviousPreviewPrompt.textContent =
+                    this.$CurrentpreviewPrompt.textContent + " " + operation;
+            }
             this.PreviousOperation = operation;
             this.$CurrentpreviewPrompt.textContent = ""; // 현재 입력값 초기화
         } else if (this.$PreviousPreviewPrompt.textContent !== "") {
@@ -43,7 +51,6 @@ class Calculator{
         }
     }
 
-    
     handlePlus(){
       return (+this.$PreviousPreviewPrompt.textContent.split(" ")[0] +
           +this.$CurrentpreviewPrompt.textContent); 
@@ -62,22 +69,26 @@ class Calculator{
         +this.$CurrentpreviewPrompt.textContent); 
     }
 
-    
-    onEqaul(){
-        let result = 0;
-        if(this.PreviousOperation == "+"){
-            result = this.handlePlus();
-        }else if(this.PreviousOperation == "-"){
-            result = this.handleMinus();
-        }else if(this.PreviousOperation == "*"){
-            result = this.handleMultiply();
-        }else if(this.PreviousOperation == "÷"){
-            result = this.handleDivide();
+    onEqaul() {
+        const expression = this.$PreviousPreviewPrompt.textContent + this.$CurrentpreviewPrompt.textContent;
+        try {
+            // 수식 계산
+            const result = this.evaluateExpression(expression);
+            this.$PreviousPreviewPrompt.textContent = ""; // 이전 프롬프트 초기화
+            this.$CurrentpreviewPrompt.textContent = result.toString(); // 결과를 현재 프롬프트에 표시
+            this.PreviousOperation = "";
+            this.CurrentOperation = "";
+        } catch (error) {
+            this.$CurrentpreviewPrompt.textContent = "Error";
         }
-        this.$PreviousPreviewPrompt.textContent = "";
-        this.$CurrentpreviewPrompt.textContent = result.toString();
-        this.CurrentOperation ="";
     }
+
+    evaluateExpression(expression) {
+        // 연산 우선순위를 처리하기 위해 수식을 계산
+        const sanitizedExpression = expression.replace(/÷/g, "/").replace(/×/g, "*");
+        return Function(`'use strict'; return (${sanitizedExpression})`)();
+    }
+
     onReset(){
         this.$PreviousPreviewPrompt.textContent = "";
         this.$CurrentpreviewPrompt.textContent = "";
